@@ -71,6 +71,11 @@ const Acompanhamento = () => {
     { id: 4, nome: 'Foto_3x4.jpg', tamanho: '856 KB', status: 'aprovado' },
   ];
 
+  // Estilo inline para o container de status (demonstra uso de style inline)
+  const containerStyle = {
+    background: 'linear-gradient(135deg, #00A884 0%, #00C299 100%)',
+  };
+
   const getStatusColor = (status) => {
     const colors = {
       concluido: 'bg-green-500',
@@ -94,7 +99,7 @@ const Acompanhamento = () => {
   return (
     <div className="pt-20 bg-gray-50 min-h-screen">
       {/* Header com informações do processo */}
-      <section className="py-12 bg-gradient-to-br from-youvisa-green to-[#00C299]">
+      <section style={containerStyle} className="py-12">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="text-white">
             <div className="flex items-center justify-between mb-6">
