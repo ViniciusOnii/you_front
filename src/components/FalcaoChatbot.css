@@ -1,0 +1,715 @@
+/* Container principal fixo no canto inferior direito */
+.falcao-chatbot-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+  animation: slideInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Animação de entrada suave */
+@keyframes slideInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Balão de fala */
+.chat-bubble {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 320px;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.07),
+    0 10px 20px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  animation: bubbleFadeIn 0.4s ease-out;
+  transition: all 0.3s ease;
+}
+
+.chat-bubble:hover {
+  box-shadow:
+    0 6px 10px rgba(0, 0, 0, 0.1),
+    0 15px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+@keyframes bubbleFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Seta do balão apontando para o mascote */
+.chat-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  right: 40px;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid white;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.07));
+}
+
+/* Botão de fechar */
+.close-bubble {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-bubble:hover {
+  background: #f3f4f6;
+  color: #333;
+}
+
+/* Mensagem */
+.chat-message {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0 0 16px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+}
+
+.chat-message strong {
+  color: #00A884;
+  font-weight: 600;
+}
+
+/* Botão CTA */
+.chat-button {
+  width: 100%;
+  background: linear-gradient(135deg, #00A884 0%, #00C299 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 168, 132, 0.3);
+}
+
+.chat-button:hover {
+  background: linear-gradient(135deg, #009977 0%, #00B088 100%);
+  box-shadow: 0 4px 12px rgba(0, 168, 132, 0.4);
+  transform: translateY(-2px);
+}
+
+.chat-button:active {
+  transform: translateY(0);
+}
+
+/* Container do mascote */
+.mascot-container {
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.mascot-container:hover {
+  transform: translateY(-8px);
+}
+
+.mascot-container:active {
+  transform: translateY(-4px) scale(0.98);
+}
+
+/* Imagem do mascote com batida de asas realista */
+.mascot-image {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  animation: wingFlap 2.5s ease-in-out infinite;
+  transform-origin: center 70%;
+}
+
+/* Simula batida de asas de falcão pairando */
+@keyframes wingFlap {
+  /* Preparação para batida */
+  0% {
+    transform: translateY(0px) scaleY(1) rotate(0deg);
+  }
+
+  /* Batida rápida para cima (downstroke) */
+  8% {
+    transform: translateY(-15px) scaleY(0.95) rotate(-2deg);
+  }
+
+  /* Pico da batida - compressão */
+  12% {
+    transform: translateY(-18px) scaleY(0.92) rotate(-1deg);
+  }
+
+  /* Início da descida (upstroke) */
+  20% {
+    transform: translateY(-12px) scaleY(0.96) rotate(1deg);
+  }
+
+  /* Planando suavemente */
+  30% {
+    transform: translateY(-8px) scaleY(0.98) rotate(0.5deg);
+  }
+
+  /* Continua planando */
+  45% {
+    transform: translateY(-5px) scaleY(0.99) rotate(-0.5deg);
+  }
+
+  /* Segunda batida mais suave */
+  55% {
+    transform: translateY(-10px) scaleY(0.94) rotate(-1.5deg);
+  }
+
+  /* Pico da segunda batida */
+  60% {
+    transform: translateY(-12px) scaleY(0.93) rotate(-1deg);
+  }
+
+  /* Planeio longo */
+  70% {
+    transform: translateY(-7px) scaleY(0.97) rotate(0.5deg);
+  }
+
+  /* Descida gradual */
+  85% {
+    transform: translateY(-3px) scaleY(0.99) rotate(0deg);
+  }
+
+  /* Preparação para próxima batida */
+  100% {
+    transform: translateY(0px) scaleY(1) rotate(0deg);
+  }
+}
+
+.mascot {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+/* Emoji fallback */
+.mascot-emoji {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 80px;
+  background: linear-gradient(135deg, #00A884 0%, #00C299 100%);
+  border-radius: 50%;
+  box-shadow: 0 8px 16px rgba(0, 168, 132, 0.3);
+}
+
+.mascot-container:hover .mascot {
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.18));
+}
+
+/* Sombra sincronizada com batidas de asa */
+.mascot-shadow {
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 65%;
+  height: 10px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    transparent 80%
+  );
+  border-radius: 50%;
+  animation: shadowWingSync 2.5s ease-in-out infinite;
+  filter: blur(3px);
+}
+
+/* Sombra espelha exatamente as batidas de asa */
+@keyframes shadowWingSync {
+  /* Sombra máxima - pássaro no chão */
+  0% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(1);
+  }
+
+  /* Batida forte - sobe rápido, sombra diminui muito */
+  8% {
+    opacity: 0.25;
+    transform: translateX(-50%) scale(0.75);
+  }
+
+  /* Pico - muito alto, sombra mínima */
+  12% {
+    opacity: 0.2;
+    transform: translateX(-50%) scale(0.7);
+  }
+
+  /* Descendo um pouco */
+  20% {
+    opacity: 0.3;
+    transform: translateX(-50%) scale(0.8);
+  }
+
+  /* Planando - médio */
+  30% {
+    opacity: 0.4;
+    transform: translateX(-50%) scale(0.85);
+  }
+
+  /* Continua planeio */
+  45% {
+    opacity: 0.45;
+    transform: translateX(-50%) scale(0.9);
+  }
+
+  /* Segunda batida */
+  55% {
+    opacity: 0.28;
+    transform: translateX(-50%) scale(0.77);
+  }
+
+  /* Pico da segunda */
+  60% {
+    opacity: 0.25;
+    transform: translateX(-50%) scale(0.75);
+  }
+
+  /* Planeio */
+  70% {
+    opacity: 0.38;
+    transform: translateX(-50%) scale(0.83);
+  }
+
+  /* Descida gradual */
+  85% {
+    opacity: 0.5;
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  /* Volta ao chão */
+  100% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.mascot-container:hover .mascot-shadow {
+  opacity: 0.2;
+  transform: translateX(-50%) scale(0.7);
+  transition: all 0.3s ease;
+}
+
+/* Badge de notificação */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, #00A884 0%, #00C299 100%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow:
+    0 2px 8px rgba(0, 168, 132, 0.4),
+    0 0 0 3px white;
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* ========== JANELA DE CHAT ========== */
+
+.chat-window {
+  position: relative;
+  width: 380px;
+  height: 600px;
+  background: white;
+  border-radius: 16px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 4px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: chatWindowOpen 0.3s ease-out;
+}
+
+@keyframes chatWindowOpen {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Header do chat */
+.chat-header {
+  background: linear-gradient(135deg, #00A884 0%, #00C299 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inho-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: white;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.inho-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.online-status {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.chat-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.minimize-btn,
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.minimize-btn:hover,
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Área de mensagens */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.message {
+  display: flex;
+  gap: 10px;
+  animation: messageSlideIn 0.3s ease-out;
+}
+
+@keyframes messageSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.inho {
+  align-self: flex-start;
+}
+
+.message.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  padding: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.message-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.message-content {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.message.inho .message-content {
+  background: white;
+  color: #374151;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.message.user .message-content {
+  background: linear-gradient(135deg, #00A884 0%, #00C299 100%);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+/* Indicador de digitação */
+.typing-indicator {
+  background: white;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border-bottom-left-radius: 4px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  background: #9ca3af;
+  border-radius: 50%;
+  animation: typingBounce 1.4s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Opções rápidas */
+.quick-options {
+  padding: 12px 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+}
+
+.quick-option-btn {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  transition: all 0.2s ease;
+  color: #374151;
+}
+
+.quick-option-btn:hover {
+  background: #e5e7eb;
+  border-color: #00A884;
+  transform: translateY(-2px);
+}
+
+.option-icon {
+  font-size: 20px;
+}
+
+/* Input de mensagem */
+.chat-input-form {
+  padding: 16px 20px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.chat-input:focus {
+  border-color: #00A884;
+}
+
+.send-btn {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #00A884 0%, #00C299 100%);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 168, 132, 0.3);
+}
+
+.send-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 168, 132, 0.4);
+  transform: scale(1.05);
+}
+
+.send-btn:active {
+  transform: scale(0.95);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .chat-window {
+    width: calc(100vw - 32px);
+    max-width: 380px;
+    height: 500px;
+  }
+
+  .quick-options {
+    grid-template-columns: 1fr;
+  }
+
+  .falcao-chatbot-container {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .chat-bubble {
+    max-width: 280px;
+    padding: 16px;
+  }
+
+  .chat-message {
+    font-size: 14px;
+  }
+
+  .mascot-image {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-bubble {
+    max-width: calc(100vw - 140px);
+  }
+
+  .mascot-image {
+    width: 80px;
+    height: 80px;
+  }
+}
