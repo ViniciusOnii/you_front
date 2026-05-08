@@ -9,8 +9,11 @@
     margin: 18mm 16mm 18mm 16mm;
   }
   :root {
-    --green: #00A884;
-    --green-dark: #007a5f;
+    /* Paleta FIAP */
+    --fiap: #ED145B;
+    --fiap-dark: #B0003F;
+    --fiap-light: #FF4F88;
+    --fiap-darker: #5C0020;
     --gray-900: #111827;
     --gray-700: #374151;
     --gray-500: #6b7280;
@@ -20,6 +23,9 @@
     --blue: #3b82f6;
     --purple: #8b5cf6;
     --rose: #f43f5e;
+    /* Aliases para manter compatibilidade com classes existentes */
+    --green: var(--fiap);
+    --green-dark: var(--fiap-dark);
   }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -38,19 +44,22 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: linear-gradient(135deg, #003a2e 0%, var(--green) 60%, #00d4a3 100%);
+    background: linear-gradient(135deg, var(--fiap-darker) 0%, var(--fiap) 55%, var(--fiap-light) 100%);
     color: white;
     padding: 40mm 30mm;
     margin: -18mm -16mm;
     page-break-after: always;
   }
-  .cover .logo {
-    display: flex; align-items: center; gap: 12px; font-size: 14pt; font-weight: 700;
+  .cover .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
   }
-  .cover .logo .badge {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: white; color: var(--green);
-    display: flex; align-items: center; justify-content: center; font-size: 18pt;
+  .cover .fiap-logo {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .cover .fiap-logo svg { display: block; }
+  .cover .fiap-logo .label {
+    font-size: 9pt; letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.85; line-height: 1.4;
   }
   .cover .meta-tag {
     display: inline-block;
@@ -176,8 +185,8 @@
 
   /* ========= CAIXAS DESTACADAS ========= */
   .callout {
-    border-left: 4px solid var(--green);
-    background: #ecfdf5;
+    border-left: 4px solid var(--fiap);
+    background: #fff1f5;
     padding: 10px 14px;
     border-radius: 0 6px 6px 0;
     margin: 14px 0;
@@ -231,9 +240,23 @@
 <!-- ============================ CAPA ============================ -->
 <div class="cover">
   <div>
-    <div class="logo">
-      <div class="badge">🦅</div>
-      <span>YOUVISA</span>
+    <div class="top-bar">
+      <div class="fiap-logo">
+        <!-- Logo FIAP em SVG (recriado, vetorial e branco) -->
+        <svg width="120" height="46" viewBox="0 0 240 92" xmlns="http://www.w3.org/2000/svg">
+          <g fill="white" stroke="white" stroke-width="6" stroke-linejoin="miter" stroke-linecap="butt" fill="none">
+            <!-- F -->
+            <path d="M 8 84 L 8 8 L 50 8 M 8 46 L 38 46" stroke-width="9"/>
+            <!-- I -->
+            <line x1="74" y1="8" x2="74" y2="84" stroke-width="9"/>
+            <!-- A -->
+            <path d="M 96 84 L 122 8 L 148 84 M 108 60 L 136 60" stroke-width="9"/>
+            <!-- P -->
+            <path d="M 168 84 L 168 8 L 200 8 Q 224 8 224 28 Q 224 48 200 48 L 168 48" stroke-width="9"/>
+          </g>
+        </svg>
+        <div class="label">Faculdade de<br/>Informática e<br/>Administração Paulista</div>
+      </div>
     </div>
   </div>
   <div>
@@ -241,9 +264,9 @@
     <h1>Documento Técnico<br/>da Solução com GenAI</h1>
     <p class="subtitle">Arquitetura, modelos, RAG, agentes, observabilidade e n8n</p>
     <p class="description">
-      Plataforma de gestão de processos de visto integrada com agente de IA generativa
-      capaz de tirar dúvidas, buscar informações turísticas via RAG, consultar
-      processos do usuário e disparar fluxos de automação externa.
+      Plataforma YouVisa de gestão de processos de visto integrada com agente de IA
+      generativa capaz de tirar dúvidas, buscar informações turísticas via RAG,
+      consultar processos do usuário e disparar fluxos de automação externa.
     </p>
   </div>
   <div class="cover-footer">
@@ -345,8 +368,8 @@ HTTP, possibilitando deploy e evolução desacoplados.
   <text x="380" y="35" text-anchor="middle" font-weight="700">👤 Usuário (browser)</text>
 
   <!-- FRONTEND -->
-  <rect x="60" y="80" width="640" height="80" rx="8" fill="#ecfdf5" stroke="#00A884" stroke-width="1.5"/>
-  <text x="380" y="100" text-anchor="middle" font-weight="700" fill="#007a5f">FRONTEND — React 18 + Vite + Tailwind</text>
+  <rect x="60" y="80" width="640" height="80" rx="8" fill="#fff1f5" stroke="#ED145B" stroke-width="1.5"/>
+  <text x="380" y="100" text-anchor="middle" font-weight="700" fill="#B0003F">FRONTEND — React 18 + Vite + Tailwind</text>
   <text x="380" y="118" text-anchor="middle" fill="#374151">LoginScreen · HomeScreen · ProcessosScreen · FalcaoChatbot</text>
   <text x="380" y="134" text-anchor="middle" fill="#374151">AuthContext + ProcessosContext (localStorage por usuário)</text>
   <text x="380" y="150" text-anchor="middle" fill="#6b7280" font-style="italic">Geração de PDF cliente-side via jsPDF</text>
@@ -458,7 +481,7 @@ inspecionar latência, custo de tokens e qualidade dos prompts.</p>
   <!-- Atores -->
   <rect x="20"  y="10" width="100" height="30" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
   <text x="70"  y="30" text-anchor="middle" font-weight="700">Usuário</text>
-  <rect x="160" y="10" width="100" height="30" rx="4" fill="#ecfdf5" stroke="#00A884"/>
+  <rect x="160" y="10" width="100" height="30" rx="4" fill="#fff1f5" stroke="#ED145B"/>
   <text x="210" y="30" text-anchor="middle" font-weight="700">Frontend</text>
   <rect x="300" y="10" width="100" height="30" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
   <text x="350" y="30" text-anchor="middle" font-weight="700">Backend</text>
@@ -719,7 +742,7 @@ do agente em três camadas:
   <text x="350" y="154" text-anchor="middle" font-size="9pt" fill="#6b7280">Mantém latência baixa preservando coerência local</text>
 
   <!-- Camada 3 -->
-  <rect x="50" y="180" width="600" height="60" rx="8" fill="#ecfdf5" stroke="#00A884" stroke-width="1.5"/>
+  <rect x="50" y="180" width="600" height="60" rx="8" fill="#fff1f5" stroke="#ED145B" stroke-width="1.5"/>
   <text x="350" y="202" text-anchor="middle" font-weight="700">🗂️ Estado Dinâmico</text>
   <text x="350" y="220" text-anchor="middle">Snapshot dos processos do user (injetado via set_contexto)</text>
   <text x="350" y="234" text-anchor="middle" font-size="9pt" fill="#6b7280">Disponível para a tool consultar_meus_processos</text>
@@ -913,8 +936,8 @@ Código completo, organizado por camadas, em:
 └── docs/                  # Este documento</code></pre>
 
 <div class="footer-note">
-  YouVisa · Documento Técnico CP5 · IA Generativa<br/>
-  Vinícius Oni · Maio de 2026 · github.com/ViniciusOnii/you_front
+  FIAP · Documento Técnico CP5 · IA Generativa<br/>
+  YouVisa · Vinícius Oni · Maio de 2026
 </div>
 </section>
 
