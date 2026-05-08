@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<title>YouVisa — CP5 Documento Técnico</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+  }
+  :root {
+    --green: #00A884;
+    --green-dark: #007a5f;
+    --gray-900: #111827;
+    --gray-700: #374151;
+    --gray-500: #6b7280;
+    --gray-300: #d1d5db;
+    --gray-100: #f3f4f6;
+    --gray-50: #f9fafb;
+    --blue: #3b82f6;
+    --purple: #8b5cf6;
+    --rose: #f43f5e;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: var(--gray-900);
+    margin: 0;
+  }
+
+  /* ========= CAPA ========= */
+  .cover {
+    page-break-after: always;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #003a2e 0%, var(--green) 60%, #00d4a3 100%);
+    color: white;
+    padding: 40mm 30mm;
+    margin: -18mm -16mm;
+    page-break-after: always;
+  }
+  .cover .logo {
+    display: flex; align-items: center; gap: 12px; font-size: 14pt; font-weight: 700;
+  }
+  .cover .logo .badge {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: white; color: var(--green);
+    display: flex; align-items: center; justify-content: center; font-size: 18pt;
+  }
+  .cover .meta-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(4px);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 9pt;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 32pt; line-height: 1.15; margin: 0 0 12px 0; font-weight: 800;
+  }
+  .cover .subtitle {
+    font-size: 14pt; opacity: 0.95; margin-bottom: 6px;
+  }
+  .cover .description {
+    font-size: 10pt; opacity: 0.85; max-width: 520px; line-height: 1.6;
+  }
+  .cover-footer {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-top: 1px solid rgba(255,255,255,0.3);
+    padding-top: 16px; font-size: 9.5pt;
+  }
+  .cover-footer .col { line-height: 1.7; }
+  .cover-footer .col strong { font-size: 10pt; }
+
+  /* ========= SUMÁRIO ========= */
+  .toc {
+    page-break-after: always;
+  }
+  .toc h2 {
+    margin-top: 0;
+  }
+  .toc ol {
+    padding-left: 0; list-style: none; counter-reset: section;
+  }
+  .toc ol li {
+    counter-increment: section;
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--gray-300);
+    display: flex; justify-content: space-between;
+  }
+  .toc ol li::before {
+    content: counter(section) ". ";
+    color: var(--green); font-weight: 700; margin-right: 8px;
+  }
+
+  /* ========= TIPOGRAFIA GERAL ========= */
+  h1, h2, h3, h4 {
+    color: var(--gray-900);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  h2 {
+    font-size: 18pt;
+    margin: 28px 0 12px;
+    padding: 10px 0 6px 0;
+    border-bottom: 3px solid var(--green);
+    page-break-after: avoid;
+  }
+  h2 .num {
+    color: var(--green); margin-right: 10px;
+  }
+  h3 {
+    font-size: 13pt;
+    margin: 20px 0 8px;
+    color: var(--green-dark);
+    page-break-after: avoid;
+  }
+  h4 {
+    font-size: 11pt;
+    margin: 16px 0 6px;
+    color: var(--gray-700);
+  }
+  p { margin: 8px 0; text-align: justify; }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--gray-900); }
+  code {
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 9pt;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  pre {
+    background: var(--gray-900);
+    color: #e5e7eb;
+    padding: 12px 14px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 8.5pt;
+    line-height: 1.5;
+    page-break-inside: avoid;
+  }
+  pre code {
+    background: transparent; color: inherit; padding: 0; font-size: inherit;
+  }
+
+  /* ========= TABELAS ========= */
+  table {
+    width: 100%; border-collapse: collapse; margin: 14px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  thead {
+    background: var(--green);
+    color: white;
+  }
+  th, td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--gray-300);
+    vertical-align: top;
+  }
+  th { font-weight: 600; }
+  tbody tr:nth-child(even) { background: var(--gray-50); }
+  tbody tr td:first-child { font-weight: 600; color: var(--gray-700); width: 26%; }
+
+  /* ========= CAIXAS DESTACADAS ========= */
+  .callout {
+    border-left: 4px solid var(--green);
+    background: #ecfdf5;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 14px 0;
+    font-size: 10pt;
+  }
+  .callout.danger {
+    border-left-color: var(--rose);
+    background: #fef2f2;
+  }
+  .callout.info {
+    border-left-color: var(--blue);
+    background: #eff6ff;
+  }
+  .callout strong { color: inherit; }
+
+  /* ========= FIGURAS ========= */
+  figure {
+    margin: 16px 0;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  figure svg { max-width: 100%; height: auto; }
+  figcaption {
+    font-size: 9pt;
+    color: var(--gray-500);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* ========= QUEBRAS DE PÁGINA ========= */
+  .page-break { page-break-before: always; }
+  section { page-break-inside: auto; }
+
+  /* ========= RODAPÉ INTERNO ========= */
+  .footer-note {
+    margin-top: 40px;
+    padding-top: 14px;
+    border-top: 1px solid var(--gray-300);
+    font-size: 9pt;
+    color: var(--gray-500);
+    text-align: center;
+  }
+
+  /* ========= LINKS ========= */
+  a { color: var(--green-dark); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- ============================ CAPA ============================ -->
+<div class="cover">
+  <div>
+    <div class="logo">
+      <div class="badge">🦅</div>
+      <span>YOUVISA</span>
+    </div>
+  </div>
+  <div>
+    <span class="meta-tag">Checkpoint 5 · IA Generativa</span>
+    <h1>Documento Técnico<br/>da Solução com GenAI</h1>
+    <p class="subtitle">Arquitetura, modelos, RAG, agentes, observabilidade e n8n</p>
+    <p class="description">
+      Plataforma de gestão de processos de visto integrada com agente de IA generativa
+      capaz de tirar dúvidas, buscar informações turísticas via RAG, consultar
+      processos do usuário e disparar fluxos de automação externa.
+    </p>
+  </div>
+  <div class="cover-footer">
+    <div class="col">
+      <strong>Autor</strong><br/>
+      Vinícius Oni<br/>
+      Frontend, backend e agente
+    </div>
+    <div class="col" style="text-align:right">
+      <strong>Disciplina</strong><br/>
+      IA Generativa — CP5<br/>
+      Maio de 2026
+    </div>
+  </div>
+</div>
+
+<!-- ============================ SUMÁRIO ============================ -->
+<section class="toc">
+  <h2><span class="num">📑</span>Sumário</h2>
+  <ol>
+    <li><span>Descrição do problema</span><span>3</span></li>
+    <li><span>Arquitetura da solução</span><span>4</span></li>
+    <li><span>Modelos utilizados</span><span>6</span></li>
+    <li><span>Stack tecnológica</span><span>7</span></li>
+    <li><span>Aplicação dos conteúdos da disciplina ⭐</span><span>8</span></li>
+    <li><span>Engenharia de contexto</span><span>10</span></li>
+    <li><span>Observabilidade e monitoramento</span><span>11</span></li>
+    <li><span>Limitações da solução</span><span>12</span></li>
+    <li><span>Melhorias futuras</span><span>13</span></li>
+    <li><span>Demonstração prática</span><span>14</span></li>
+  </ol>
+</section>
+
+<!-- ============================ 1 ============================ -->
+<section>
+<h2><span class="num">1.</span>Descrição do problema</h2>
+
+<h3>1.1 Contexto</h3>
+<p>
+A obtenção de vistos para viagens internacionais é um processo notoriamente
+burocrático, fragmentado e estressante para o cidadão brasileiro. As dores
+recorrentes incluem:
+</p>
+<ul>
+  <li><strong>Falta de transparência</strong>: o solicitante não sabe em qual etapa o processo
+    está, o que gera ansiedade e múltiplos contatos com call centers.</li>
+  <li><strong>Documentação confusa</strong>: cada tipo de visto (turismo, estudo, trabalho,
+    residência) tem requisitos próprios, frequentemente desatualizados nos sites
+    consulares.</li>
+  <li><strong>Pouca personalização</strong>: o usuário não tem orientação sobre o destino —
+    pontos turísticos, dicas culturais, melhor época para viajar.</li>
+  <li><strong>Atendimento ineficiente</strong>: os canais tradicionais (e-mail, telefone) têm
+    alta latência e baixa escalabilidade.</li>
+</ul>
+
+<h3>1.2 Solução proposta</h3>
+<p>
+A <strong>YouVisa</strong> é uma plataforma SaaS que centraliza toda a jornada do visto em
+um único produto, oferecendo:
+</p>
+<ol>
+  <li>Painel de acompanhamento em tempo real do processo (timeline visual, status, prazos).</li>
+  <li>Cadastro e gestão de múltiplas solicitações por usuário.</li>
+  <li>Assistente virtual <strong>"Inho"</strong> baseado em IA Generativa, capaz de responder
+    dúvidas, sugerir destinos, consultar processos e disparar fluxos de automação.</li>
+  <li>Geração automatizada de guias turísticos personalizados em PDF.</li>
+</ol>
+
+<h3>1.3 Público-alvo</h3>
+<table>
+  <thead><tr><th>Segmento</th><th>Perfil</th><th>Necessidade principal</th></tr></thead>
+  <tbody>
+    <tr><td>Primário</td><td>Brasileiros 22–50 anos</td><td>Acompanhar processo de visto turismo / estudo / trabalho</td></tr>
+    <tr><td>Secundário</td><td>Agências de viagem</td><td>Terceirizar processamento de vistos para múltiplos clientes</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 2 ============================ -->
+<section class="page-break">
+<h2><span class="num">2.</span>Arquitetura da solução</h2>
+
+<h3>2.1 Visão geral</h3>
+<p>
+A solução é dividida em <strong>quatro camadas independentes</strong> que se comunicam por
+HTTP, possibilitando deploy e evolução desacoplados.
+</p>
+
+<figure>
+<svg viewBox="0 0 760 540" xmlns="http://www.w3.org/2000/svg" style="font-family: -apple-system, sans-serif; font-size: 11px;">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#374151"/>
+    </marker>
+  </defs>
+
+  <!-- USUÁRIO -->
+  <rect x="280" y="10" width="200" height="40" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="380" y="35" text-anchor="middle" font-weight="700">👤 Usuário (browser)</text>
+
+  <!-- FRONTEND -->
+  <rect x="60" y="80" width="640" height="80" rx="8" fill="#ecfdf5" stroke="#00A884" stroke-width="1.5"/>
+  <text x="380" y="100" text-anchor="middle" font-weight="700" fill="#007a5f">FRONTEND — React 18 + Vite + Tailwind</text>
+  <text x="380" y="118" text-anchor="middle" fill="#374151">LoginScreen · HomeScreen · ProcessosScreen · FalcaoChatbot</text>
+  <text x="380" y="134" text-anchor="middle" fill="#374151">AuthContext + ProcessosContext (localStorage por usuário)</text>
+  <text x="380" y="150" text-anchor="middle" fill="#6b7280" font-style="italic">Geração de PDF cliente-side via jsPDF</text>
+
+  <!-- BACKEND -->
+  <rect x="60" y="200" width="640" height="120" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="380" y="220" text-anchor="middle" font-weight="700" fill="#1e40af">BACKEND — Python 3.11 + FastAPI</text>
+
+  <rect x="80" y="235" width="160" height="34" rx="5" fill="white" stroke="#93c5fd"/>
+  <text x="160" y="256" text-anchor="middle">Router POST /chat</text>
+
+  <rect x="280" y="235" width="200" height="34" rx="5" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="380" y="256" text-anchor="middle" font-weight="700">Agente Inho (LangGraph ReAct)</text>
+
+  <rect x="80" y="282" width="180" height="28" rx="4" fill="white" stroke="#93c5fd"/>
+  <text x="170" y="300" text-anchor="middle" font-size="10px">tool: buscar_destinos (RAG)</text>
+
+  <rect x="280" y="282" width="180" height="28" rx="4" fill="white" stroke="#93c5fd"/>
+  <text x="370" y="300" text-anchor="middle" font-size="10px">tool: consultar_processos</text>
+
+  <rect x="480" y="282" width="180" height="28" rx="4" fill="white" stroke="#93c5fd"/>
+  <text x="570" y="300" text-anchor="middle" font-size="10px">tool: notificar_n8n</text>
+
+  <!-- VECTOR STORE -->
+  <rect x="40" y="370" width="220" height="80" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="150" y="392" text-anchor="middle" font-weight="700">📚 Vector Store</text>
+  <text x="150" y="410" text-anchor="middle">ChromaDB persistente</text>
+  <text x="150" y="426" text-anchor="middle">embeddings text-embedding-004</text>
+  <text x="150" y="442" text-anchor="middle" font-size="10px" fill="#6b7280">23 docs · 768 dim · cosseno</text>
+
+  <!-- N8N -->
+  <rect x="290" y="370" width="180" height="80" rx="8" fill="#fce7f3" stroke="#db2777" stroke-width="1.5"/>
+  <text x="380" y="392" text-anchor="middle" font-weight="700">⚙️ n8n (Docker)</text>
+  <text x="380" y="410" text-anchor="middle">Webhook → Switch</text>
+  <text x="380" y="426" text-anchor="middle">Notificar / Ticket</text>
+  <text x="380" y="442" text-anchor="middle" font-size="10px" fill="#6b7280">workflow ativo · webhook</text>
+
+  <!-- LANGFUSE -->
+  <rect x="500" y="370" width="220" height="80" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="610" y="392" text-anchor="middle" font-weight="700">📊 Langfuse Cloud</text>
+  <text x="610" y="410" text-anchor="middle">Traces · latência · tokens</text>
+  <text x="610" y="426" text-anchor="middle">replay de prompts</text>
+  <text x="610" y="442" text-anchor="middle" font-size="10px" fill="#6b7280">observabilidade</text>
+
+  <!-- LEGENDA -->
+  <rect x="80" y="480" width="600" height="40" rx="6" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="380" y="498" text-anchor="middle" font-size="10px" fill="#6b7280">
+    Setas indicam fluxo de requisição. Cada componente é desacoplado e pode ser
+    deployed separadamente.
+  </text>
+  <text x="380" y="513" text-anchor="middle" font-size="10px" fill="#6b7280">
+    Frontend → Backend (HTTP) · Agente → Tools (LangChain) · Tools → Serviços externos
+  </text>
+
+  <!-- Setas -->
+  <line x1="380" y1="50" x2="380" y2="78" stroke="#374151" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="380" y1="160" x2="380" y2="198" stroke="#374151" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="170" y1="310" x2="150" y2="368" stroke="#374151" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="570" y1="310" x2="380" y2="368" stroke="#374151" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="480" y1="260" x2="500" y2="370" stroke="#374151" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+</svg>
+<figcaption>Figura 1 — Visão geral da arquitetura em 4 camadas: usuário, frontend, backend (com agente e tools) e serviços externos (vector store, n8n, observabilidade).</figcaption>
+</figure>
+
+<h3>2.2 Camadas</h3>
+
+<h4>Frontend (<code>/src</code>)</h4>
+<p>SPA React responsável pela interface, autenticação simulada e persistência
+de dados de usuário no <code>localStorage</code>. O componente <code>FalcaoChatbot</code> envia as
+mensagens do usuário ao backend e renderiza a resposta do agente, com fallback
+gracioso se o backend estiver offline.</p>
+
+<h4>Backend (<code>/backend</code>)</h4>
+<p>API FastAPI com um único endpoint principal (<code>POST /chat</code>) que recebe a
+mensagem do usuário, histórico e snapshot dos processos do user logado, invoca
+o agente Inho (LangGraph) e retorna a resposta final.</p>
+
+<h4>Agentes e Tools</h4>
+<p>Implementados com <strong>LangGraph (ReAct)</strong> sobre <strong>Gemini 2.0 Flash</strong>. O agente
+decide autonomamente qual tool acionar:</p>
+
+<table>
+  <thead><tr><th>Tool</th><th>Função</th></tr></thead>
+  <tbody>
+    <tr><td><code>buscar_destinos</code></td><td>Busca semântica RAG sobre 23 atrações turísticas em 5 países</td></tr>
+    <tr><td><code>consultar_meus_processos</code></td><td>Lê o snapshot dos processos do user logado</td></tr>
+    <tr><td><code>notificar_evento_n8n</code></td><td>Dispara webhook para automação no n8n</td></tr>
+  </tbody>
+</table>
+
+<h4>Vector Store</h4>
+<p><strong>ChromaDB persistente</strong> (<code>backend/data/chroma/</code>) com embeddings de 768
+dimensões gerados pelo modelo <code>text-embedding-004</code> do Google. Métrica de
+similaridade: cosseno.</p>
+
+<h4>Automação</h4>
+<p><strong>n8n</strong> rodando em container Docker (<code>n8n/docker-compose.yml</code>) com workflow
+ativo (<code>workflows/youvisa-evento.json</code>) que recebe eventos via webhook e
+roteia para diferentes ações (notificar suporte, abrir ticket).</p>
+
+<h4>Observabilidade</h4>
+<p><strong>Langfuse Cloud</strong> captura traces de cada interação com o agente, permitindo
+inspecionar latência, custo de tokens e qualidade dos prompts.</p>
+
+<h3>2.3 Sequência de uma chamada típica</h3>
+
+<figure>
+<svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg" style="font-family: -apple-system, sans-serif; font-size: 10px;">
+  <!-- Atores -->
+  <rect x="20"  y="10" width="100" height="30" rx="4" fill="#fef3c7" stroke="#f59e0b"/>
+  <text x="70"  y="30" text-anchor="middle" font-weight="700">Usuário</text>
+  <rect x="160" y="10" width="100" height="30" rx="4" fill="#ecfdf5" stroke="#00A884"/>
+  <text x="210" y="30" text-anchor="middle" font-weight="700">Frontend</text>
+  <rect x="300" y="10" width="100" height="30" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
+  <text x="350" y="30" text-anchor="middle" font-weight="700">Backend</text>
+  <rect x="440" y="10" width="100" height="30" rx="4" fill="#dbeafe" stroke="#3b82f6"/>
+  <text x="490" y="30" text-anchor="middle" font-weight="700">Agente Inho</text>
+  <rect x="580" y="10" width="120" height="30" rx="4" fill="#fef9c3" stroke="#ca8a04"/>
+  <text x="640" y="30" text-anchor="middle" font-weight="700">RAG / Tools</text>
+
+  <!-- Lifelines -->
+  <line x1="70"  y1="40" x2="70"  y2="310" stroke="#9ca3af" stroke-dasharray="3,3"/>
+  <line x1="210" y1="40" x2="210" y2="310" stroke="#9ca3af" stroke-dasharray="3,3"/>
+  <line x1="350" y1="40" x2="350" y2="310" stroke="#9ca3af" stroke-dasharray="3,3"/>
+  <line x1="490" y1="40" x2="490" y2="310" stroke="#9ca3af" stroke-dasharray="3,3"/>
+  <line x1="640" y1="40" x2="640" y2="310" stroke="#9ca3af" stroke-dasharray="3,3"/>
+
+  <!-- Mensagens -->
+  <line x1="70"  y1="65" x2="208" y2="65" stroke="#374151" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="140" y="60" text-anchor="middle">"O que visitar em Paris?"</text>
+
+  <line x1="210" y1="95" x2="348" y2="95" stroke="#374151" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="280" y="90" text-anchor="middle">POST /chat (msg + histórico + processos)</text>
+
+  <line x1="350" y1="125" x2="488" y2="125" stroke="#374151" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="420" y="120" text-anchor="middle">invoke(messages)</text>
+
+  <line x1="490" y1="155" x2="638" y2="155" stroke="#374151" stroke-width="1.2" marker-end="url(#arrow)"/>
+  <text x="565" y="150" text-anchor="middle">tool_call buscar_destinos("Paris")</text>
+
+  <line x1="640" y1="185" x2="492" y2="185" stroke="#374151" stroke-width="1.2" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+  <text x="565" y="180" text-anchor="middle">[4 docs do ChromaDB]</text>
+
+  <line x1="490" y1="215" x2="352" y2="215" stroke="#374151" stroke-width="1.2" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+  <text x="420" y="210" text-anchor="middle">resposta final em PT-BR</text>
+
+  <line x1="350" y1="245" x2="212" y2="245" stroke="#374151" stroke-width="1.2" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+  <text x="280" y="240" text-anchor="middle">{ resposta, tools_chamadas }</text>
+
+  <line x1="210" y1="275" x2="72" y2="275" stroke="#374151" stroke-width="1.2" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+  <text x="140" y="270" text-anchor="middle">Mensagem renderizada no chat</text>
+</svg>
+<figcaption>Figura 2 — Diagrama de sequência de uma chamada típica ao agente. Setas pontilhadas representam respostas.</figcaption>
+</figure>
+</section>
+
+<!-- ============================ 3 ============================ -->
+<section class="page-break">
+<h2><span class="num">3.</span>Modelos utilizados</h2>
+
+<h3>3.1 Modelo de chat — Gemini 2.0 Flash</h3>
+<table>
+  <tbody>
+    <tr><td>Nome</td><td><code>gemini-2.0-flash-exp</code></td></tr>
+    <tr><td>Tipo</td><td>Texto generativo (LLM)</td></tr>
+    <tr><td>Provedor</td><td>Google AI Studio</td></tr>
+    <tr><td>Janela de contexto</td><td>1.000.000 tokens (1M)</td></tr>
+    <tr><td>Forma de acesso</td><td>API REST + SDK <code>google-genai</code></td></tr>
+    <tr><td>Motivo da escolha</td><td>Gratuito no free tier (60 req/min), latência baixa (~600ms primeiro token), suporte nativo a tool calling, janela de contexto enorme dispensa estratégias complexas de truncamento de histórico</td></tr>
+    <tr><td>Limitações</td><td>Modelo experimental — pode ter mudanças de comportamento. Free tier tem rate limit. Qualidade levemente inferior ao Gemini 2.5 Pro em raciocínio complexo</td></tr>
+  </tbody>
+</table>
+
+<h3>3.2 Modelo de embeddings — text-embedding-004</h3>
+<table>
+  <tbody>
+    <tr><td>Nome</td><td><code>text-embedding-004</code></td></tr>
+    <tr><td>Tipo</td><td>Embeddings densos (texto → vetor)</td></tr>
+    <tr><td>Provedor</td><td>Google AI Studio</td></tr>
+    <tr><td>Dimensões</td><td>768</td></tr>
+    <tr><td>Forma de acesso</td><td>API REST + SDK <code>google-genai</code></td></tr>
+    <tr><td>Motivo da escolha</td><td>Gratuito, mesmo provedor do LLM (consistência semântica entre indexação e geração), boa performance em português, batch endpoint para indexação rápida</td></tr>
+    <tr><td>Limitações</td><td>768 dim já é suficiente para nossa base pequena (23 docs). Para escala maior, considerar <code>text-embedding-3-large</code> da OpenAI (3072 dim)</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 4 ============================ -->
+<section class="page-break">
+<h2><span class="num">4.</span>Stack tecnológica</h2>
+
+<h3>4.1 Frontend</h3>
+<table>
+  <thead><tr><th>Ferramenta</th><th>Papel no projeto</th></tr></thead>
+  <tbody>
+    <tr><td>React 18</td><td>Biblioteca de UI, gerencia estado e renderização</td></tr>
+    <tr><td>Vite 5</td><td>Build tool e dev server (HMR)</td></tr>
+    <tr><td>Tailwind CSS 3</td><td>Estilização utility-first, design system consistente</td></tr>
+    <tr><td>jsPDF + autotable</td><td>Geração client-side de guias turísticos em PDF</td></tr>
+    <tr><td>Context API</td><td>Gestão de estado global (autenticação e processos)</td></tr>
+  </tbody>
+</table>
+
+<h3>4.2 Backend</h3>
+<table>
+  <thead><tr><th>Ferramenta</th><th>Papel no projeto</th></tr></thead>
+  <tbody>
+    <tr><td>Python 3.11</td><td>Linguagem principal do backend</td></tr>
+    <tr><td>FastAPI</td><td>Framework web assíncrono, validação Pydantic, OpenAPI auto-geradas</td></tr>
+    <tr><td>Uvicorn</td><td>ASGI server de produção</td></tr>
+    <tr><td>Pydantic 2</td><td>Schemas tipados das requisições e respostas</td></tr>
+    <tr><td>python-dotenv</td><td>Carregamento de variáveis de ambiente</td></tr>
+  </tbody>
+</table>
+
+<h3>4.3 GenAI</h3>
+<table>
+  <thead><tr><th>Ferramenta</th><th>Papel no projeto</th></tr></thead>
+  <tbody>
+    <tr><td>google-genai</td><td>SDK oficial Google para Gemini (chat e embeddings)</td></tr>
+    <tr><td>LangGraph</td><td>Orquestração do agente ReAct com tools</td></tr>
+    <tr><td>LangChain Core</td><td>Abstrações de tools (<code>@tool</code>) e mensagens</td></tr>
+    <tr><td>langchain-google-genai</td><td>Adapter LangChain ↔ Gemini</td></tr>
+    <tr><td>ChromaDB</td><td>Vector store persistente local</td></tr>
+  </tbody>
+</table>
+
+<h3>4.4 Automação e Observabilidade</h3>
+<table>
+  <thead><tr><th>Ferramenta</th><th>Papel no projeto</th></tr></thead>
+  <tbody>
+    <tr><td>n8n (Docker)</td><td>Workflow de automação para eventos disparados pelo agente</td></tr>
+    <tr><td>Langfuse</td><td>Observabilidade de LLMs — traces, métricas, custos</td></tr>
+  </tbody>
+</table>
+
+<h3>4.5 Infraestrutura</h3>
+<table>
+  <thead><tr><th>Ferramenta</th><th>Papel no projeto</th></tr></thead>
+  <tbody>
+    <tr><td>Docker Compose</td><td>Orquestração local do n8n</td></tr>
+    <tr><td>Git + GitHub</td><td>Versionamento e repositório remoto</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 5 ============================ -->
+<section class="page-break">
+<h2><span class="num">5.</span>Aplicação dos conteúdos da disciplina ⭐</h2>
+
+<div class="callout info">
+<strong>Esta é a seção de maior peso na avaliação.</strong> Detalhamos abaixo, item
+por item, ONDE cada tema da ementa foi aplicado no projeto, com referências
+diretas a arquivos e linhas.
+</div>
+
+<table>
+  <thead><tr><th>Tema da disciplina</th><th>Aplicação concreta no projeto</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Prompt Engineering</strong></td>
+      <td>System prompt estruturado em <code>backend/app/agents/inho.py</code> com persona
+        definida (Inho, falcão mascote), papel, diretrizes de tom, restrições contra
+        alucinação ("baseie a resposta nos dados retornados — não invente atrações"),
+        formato de saída e uso controlado de emojis.</td>
+    </tr>
+    <tr>
+      <td><strong>RAG</strong></td>
+      <td>Pipeline completo em <code>backend/app/rag/store.py</code>: (1) chunking por destino,
+        (2) embeddings via <code>text-embedding-004</code>, (3) indexação em ChromaDB persistente,
+        (4) recuperação top-k=4 com filtro opcional por país. A tool
+        <code>buscar_destinos</code> é chamada pelo agente quando o user pergunta sobre
+        pontos turísticos.</td>
+    </tr>
+    <tr>
+      <td><strong>Agentes</strong></td>
+      <td>Agente ReAct em <code>backend/app/agents/inho.py</code> usando
+        <code>langgraph.prebuilt.create_react_agent</code>. O agente decide autonomamente
+        quando chamar cada tool, realizando múltiplos turnos de raciocínio se necessário.</td>
+    </tr>
+    <tr>
+      <td><strong>MCP / Integração de ferramentas</strong></td>
+      <td>Três tools registradas via decorator <code>@tool</code> do LangChain Core
+        (<code>backend/app/tools/</code>): <code>buscar_destinos</code> (RAG),
+        <code>consultar_meus_processos</code> (estado da aplicação),
+        <code>notificar_evento_n8n</code> (integração externa via webhook). O agente
+        recebe schemas tipados e o LLM faz function calling estruturado.</td>
+    </tr>
+    <tr>
+      <td><strong>Observabilidade</strong></td>
+      <td>Langfuse integrado em <code>backend/app/observability.py</code> via context manager
+        <code>trace()</code>. Cada chamada ao endpoint <code>/chat</code> cria um trace
+        com <code>user_id</code>, tamanho da mensagem e número de processos do usuário.
+        Dashboard em <code>cloud.langfuse.com</code> mostra latência, tokens, custo e
+        replay de prompts.</td>
+    </tr>
+    <tr>
+      <td><strong>Deploy</strong></td>
+      <td>Backend preparado para deploy em Render (Python free tier), frontend em Vercel
+        ou Netlify. Variáveis sensíveis isoladas em <code>.env</code>. CORS configurado
+        por ambiente. n8n em container Docker portável.</td>
+    </tr>
+    <tr>
+      <td><strong>Multimodalidade</strong></td>
+      <td>Multimodalidade de saída: o agente coordena com o frontend para gerar PDFs
+        ricos via jsPDF (textos + estrutura visual + capa). Multimodalidade de entrada
+        via voz fica como melhoria futura (Web Speech API ou Whisper).</td>
+    </tr>
+    <tr>
+      <td><strong>Engenharia de contexto</strong></td>
+      <td>(i) Construção do prompt dinâmico no router <code>/chat</code>: histórico das
+        últimas 6 mensagens + system prompt + injeção do snapshot de processos via
+        <code>set_contexto</code>. (ii) Chunking semântico por documento (granularidade
+        ideal para a base atual). (iii) Recuperação top-k filtrada para reduzir ruído.</td>
+    </tr>
+    <tr>
+      <td><strong>Tool calling estruturado</strong></td>
+      <td>Os argumentos das tools são tipados (<code>query: str, pais: str | None</code>).
+        O LLM emite chamadas em JSON validadas pelo LangChain antes da execução.</td>
+    </tr>
+    <tr>
+      <td><strong>Memória do agente</strong></td>
+      <td>Memória de curto prazo: histórico das últimas 6 mensagens passado a cada turno.
+        Memória de longo prazo: estado dos processos do user persistido no localStorage
+        do front, enviado a cada requisição.</td>
+    </tr>
+    <tr>
+      <td><strong>Fine-tuning</strong></td>
+      <td>Não aplicado nesta versão — o <code>text-embedding-004</code> e o
+        <code>gemini-2.0-flash</code> zero-shot já dão resultados suficientes para o
+        domínio. Documentado como melhoria futura na seção 9 caso a base cresça
+        acima de 1000 documentos.</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 6 ============================ -->
+<section class="page-break">
+<h2><span class="num">6.</span>Engenharia de contexto</h2>
+
+<h3>6.1 Como o contexto é montado</h3>
+<p>
+A cada requisição, o router <code>backend/app/routers/chat.py</code> constrói o contexto
+do agente em três camadas:
+</p>
+<ol>
+  <li><strong>System prompt</strong> (<code>SYSTEM_PROMPT</code> em <code>inho.py</code>) — define
+    persona, papel, restrições e estilo. Imutável entre requests.</li>
+  <li><strong>Histórico conversacional</strong> — últimas 6 mensagens (3 turnos
+    user↔assistant) extraídas do front. Truncamento mantém latência baixa
+    sem perder coerência local.</li>
+  <li><strong>Estado dinâmico</strong> — snapshot dos processos do user injetado via
+    <code>set_contexto(...)</code> antes do <code>agente.invoke(...)</code>, disponível
+    para a tool <code>consultar_meus_processos</code>.</li>
+</ol>
+
+<figure>
+<svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="font-family: -apple-system, sans-serif; font-size: 11px;">
+  <!-- Camada 1 -->
+  <rect x="50" y="20" width="600" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="350" y="42" text-anchor="middle" font-weight="700">📌 System Prompt</text>
+  <text x="350" y="60" text-anchor="middle">Persona "Inho" · diretrizes · restrições anti-alucinação</text>
+  <text x="350" y="74" text-anchor="middle" font-size="9pt" fill="#6b7280">Imutável entre requests</text>
+
+  <!-- Camada 2 -->
+  <rect x="50" y="100" width="600" height="60" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="350" y="122" text-anchor="middle" font-weight="700">💬 Histórico Conversacional</text>
+  <text x="350" y="140" text-anchor="middle">Últimas 6 mensagens (3 turnos user ↔ assistant)</text>
+  <text x="350" y="154" text-anchor="middle" font-size="9pt" fill="#6b7280">Mantém latência baixa preservando coerência local</text>
+
+  <!-- Camada 3 -->
+  <rect x="50" y="180" width="600" height="60" rx="8" fill="#ecfdf5" stroke="#00A884" stroke-width="1.5"/>
+  <text x="350" y="202" text-anchor="middle" font-weight="700">🗂️ Estado Dinâmico</text>
+  <text x="350" y="220" text-anchor="middle">Snapshot dos processos do user (injetado via set_contexto)</text>
+  <text x="350" y="234" text-anchor="middle" font-size="9pt" fill="#6b7280">Disponível para a tool consultar_meus_processos</text>
+
+  <text x="350" y="270" text-anchor="middle" font-size="9pt" fill="#6b7280">
+    Camadas combinadas ≈ 600–1500 tokens, bem dentro do 1M de janela do Gemini.
+  </text>
+</svg>
+<figcaption>Figura 3 — Camadas de construção de contexto a cada requisição ao agente.</figcaption>
+</figure>
+
+<h3>6.2 Chunking</h3>
+<p>
+A base de conhecimento (<code>backend/data/knowledge_base.json</code>) é estruturada
+<strong>uma atração por documento</strong> (23 docs). Cada chunk é montado em
+<code>_chunk_para_texto()</code> concatenando os campos <code>atracao</code>,
+<code>cidade</code>, <code>pais</code>, <code>categoria</code>, <code>descricao</code>
+e <code>dica</code> em um texto coerente e auto-contido.
+</p>
+<div class="callout">
+<strong>Por que não chunking automático por tamanho?</strong> Os documentos têm tamanho
+similar e baixo (média ~200 caracteres), e o significado está fortemente acoplado
+à entidade "atração". Chunking por janela deslizante quebraria a relação semântica.
+</div>
+
+<h3>6.3 Embeddings</h3>
+<p>Geração em batch via <code>models.embed_content</code> do Gemini, modelo
+<code>text-embedding-004</code>, dimensão 768. Indexação é <strong>idempotente</strong>:
+se a contagem na coleção já bate com o JSON, pula a etapa.</p>
+
+<h3>6.4 Recuperação</h3>
+<p><code>store.buscar(query, k=4, pais=None)</code>:</p>
+<ol>
+  <li>Embed da query com o <strong>mesmo modelo</strong> da indexação (consistência semântica).</li>
+  <li><code>coll.query</code> no Chroma retorna top-k por similaridade de cosseno.</li>
+  <li>Filtro opcional via <code>where={"pais": pais}</code> quando o agente já sabe a restrição geográfica.</li>
+  <li>Resultado retornado como string formatada <code>[1] ... [2] ...</code> para o LLM citar fonte.</li>
+</ol>
+
+<h3>6.5 Memória do agente</h3>
+<ul>
+  <li><strong>Curto prazo</strong>: histórico recente passado a cada turno (mantém coerência conversacional).</li>
+  <li><strong>Longo prazo (estado da aplicação)</strong>: processos do user no localStorage do front. Não persistimos histórico de chat no backend para simplificar e preservar privacidade.</li>
+</ul>
+</section>
+
+<!-- ============================ 7 ============================ -->
+<section class="page-break">
+<h2><span class="num">7.</span>Observabilidade e monitoramento</h2>
+
+<h3>7.1 Logs</h3>
+<ul>
+  <li><strong>Backend</strong>: logs estruturados em pontos críticos (indexação RAG, falhas no n8n). Em produção, plugar <code>structlog</code> para JSON logs.</li>
+  <li><strong>n8n</strong>: cada execução é registrada na própria UI do n8n (histórico de execuções, payloads, tempos por nó).</li>
+  <li><strong>Frontend</strong>: erros de fetch caem em fallback gracioso (modo legado rule-based) — registrados em <code>console.error</code>.</li>
+</ul>
+
+<h3>7.2 Métricas (Langfuse)</h3>
+<table>
+  <thead><tr><th>Métrica</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>Latência</td><td>Por chamada de LLM e por trace completo</td></tr>
+    <tr><td>Tokens</td><td>Input/output e custo estimado por modelo</td></tr>
+    <tr><td>Tools chamadas</td><td>Quais tools o agente acionou em cada interação</td></tr>
+    <tr><td>Taxa de erro</td><td>Por tool e por trace, com stack trace</td></tr>
+    <tr><td>Replay</td><td>Reproduzir qualquer interação do passado para debugging</td></tr>
+  </tbody>
+</table>
+
+<h3>7.3 Como falhas são monitoradas</h3>
+<ul>
+  <li>Erros no agente são capturados pelo <code>try/except</code> em <code>chat.py</code> e retornados como HTTP 500 com mensagem.</li>
+  <li>Cada exception também é registrada no trace ativo do Langfuse, permitindo identificar padrões.</li>
+  <li>Webhook do n8n tem timeout de 5s — falha não derruba o agente, apenas retorna mensagem informativa.</li>
+  <li>O endpoint <code>/health</code> expõe status dos componentes (Langfuse ativo, n8n configurado) para health checks externos.</li>
+</ul>
+</section>
+
+<!-- ============================ 8 ============================ -->
+<section class="page-break">
+<h2><span class="num">8.</span>Limitações da solução</h2>
+
+<table>
+  <thead><tr><th>Limitação</th><th>Impacto e mitigação atual</th></tr></thead>
+  <tbody>
+    <tr><td>Alucinação</td><td>Mitigada parcialmente pelo system prompt e pelo RAG. Ainda assim, o LLM pode confabular informações fora do escopo (ex: preços, horários).</td></tr>
+    <tr><td>Latência</td><td>1.5–3 segundos por resposta (Gemini 2.0 Flash, sem streaming). Inaceitável para uso em massa em pico sem caching ou modelo local.</td></tr>
+    <tr><td>Custo</td><td>Free tier cobre desenvolvimento e demo. Em produção (>60 req/min), passa para tier pago — estimativa $0.0003/req com nossa janela de contexto.</td></tr>
+    <tr><td>Contexto limitado</td><td>Histórico truncado em 6 mensagens. Conversas longas perdem coerência inicial. Solução: implementar memória resumida (summary buffer).</td></tr>
+    <tr><td>Modelo experimental</td><td><code>gemini-2.0-flash-exp</code> pode ter mudanças não documentadas. Free tier tem rate limit (60 req/min).</td></tr>
+    <tr><td>Sem streaming</td><td>Resposta só após o agente terminar todos os turnos. UX poderia ser melhor com streaming token-a-token.</td></tr>
+    <tr><td>Base de conhecimento pequena</td><td>23 atrações em 5 países. Para uso real, expandir para milhares exigiria revisão da estratégia de chunking e vector DB gerenciado.</td></tr>
+    <tr><td>Segurança</td><td>Autenticação simulada com mock no frontend. Sem backend de auth real — adequado apenas para protótipo acadêmico.</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 9 ============================ -->
+<section class="page-break">
+<h2><span class="num">9.</span>Melhorias futuras</h2>
+
+<table>
+  <thead><tr><th>Melhoria</th><th>Descrição</th></tr></thead>
+  <tbody>
+    <tr><td>Multi-agent</td><td>Especializar em sub-agentes (Documentação, Financeiro, Turismo) coordenados por um Supervisor (CrewAI ou LangGraph com <code>Send</code>).</td></tr>
+    <tr><td>Voz</td><td>Input multimodal via Web Speech API no browser (zero custo) ou Whisper local. Output via TTS (ex: ElevenLabs).</td></tr>
+    <tr><td>Modelos locais</td><td>Fallback para Llama 3.2 ou Phi-3 via Ollama em modo offline ou para queries simples.</td></tr>
+    <tr><td>Fine-tuning</td><td>Treinar embeddings customizados sobre o vocabulário de vistos brasileiros (ex: "DS-160", "ESTA") quando a base passar de 1000 docs.</td></tr>
+    <tr><td>Streaming</td><td>Trocar <code>agente.invoke</code> por <code>agente.astream_events</code> e SSE no FastAPI para resposta token-a-token.</td></tr>
+    <tr><td>Guardrails</td><td>Adicionar <code>guardrails-ai</code> ou validação Pydantic estrita de output.</td></tr>
+    <tr><td>Auth real</td><td>Substituir mock por Firebase Auth ou Supabase.</td></tr>
+    <tr><td>Cache de embeddings</td><td>Cache LRU em memória de queries frequentes para reduzir latência e custo.</td></tr>
+    <tr><td>Automação n8n expandida</td><td>Workflows para envio de email com PDF gerado, lembretes de prazo, integração com Google Calendar.</td></tr>
+    <tr><td>Internacionalização</td><td>Suporte a inglês e espanhol (público estrangeiro vivendo no Brasil).</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ============================ 10 ============================ -->
+<section class="page-break">
+<h2><span class="num">10.</span>Demonstração prática</h2>
+
+<h3>10.1 Como subir o ambiente completo</h3>
+<pre><code># 1) Frontend
+npm install
+npm run dev          # http://localhost:5173
+
+# 2) Backend
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env # preencher GOOGLE_API_KEY
+uvicorn app.main:app --reload --port 8000
+
+# 3) n8n (em outro terminal)
+cd n8n
+docker compose up -d
+# importar workflows/youvisa-evento.json em http://localhost:5678</code></pre>
+
+<h3>10.2 Fluxo de uso</h3>
+<ol>
+  <li>Usuário faz login (<code>joao@youvisa.com / 123456</code>)</li>
+  <li>Cria solicitação de visto (Tipo: Turismo, Status: Em análise)</li>
+  <li>Abre o chatbot Inho (canto inferior direito)</li>
+  <li>Pergunta: <em>"Quais pontos turísticos eu vejo em Paris?"</em></li>
+  <li>Agente raciocina:
+    <ul>
+      <li>Decide chamar <code>buscar_destinos(query="Paris", pais="França")</code></li>
+      <li>Recebe 4 destinos relevantes do Chroma</li>
+      <li>Sintetiza resposta em linguagem natural</li>
+    </ul>
+  </li>
+  <li>Resposta aparece no chat (~2s)</li>
+  <li>Trace completo é registrado no Langfuse</li>
+</ol>
+
+<h3>10.3 Exemplo de trace observado no Langfuse</h3>
+<pre><code>Trace: chat_inho
+├── user_id: u-001
+├── n_processos: 2
+├── Span 1: gemini-2.0-flash-exp
+│   ├── input: 612 tokens
+│   ├── output: 89 tokens (tool_call buscar_destinos)
+│   └── latência: 720ms
+├── Span 2: tool buscar_destinos
+│   ├── query: "Paris"
+│   ├── resultados: 4 docs
+│   └── latência: 230ms (embed + chroma query)
+├── Span 3: gemini-2.0-flash-exp
+│   ├── input: 1.247 tokens
+│   ├── output: 178 tokens
+│   └── latência: 1.1s
+└── Latência total: 2.05s</code></pre>
+
+<h3>10.4 Repositório</h3>
+<p>
+Código completo, organizado por camadas, em:
+<strong>https://github.com/ViniciusOnii/you_front</strong>
+</p>
+
+<pre><code>you_front/
+├── src/                   # Frontend React
+├── backend/               # Backend Python + agente
+│   ├── app/
+│   │   ├── agents/        # LangGraph
+│   │   ├── rag/           # ChromaDB
+│   │   ├── tools/         # Tool registrations
+│   │   └── routers/
+│   └── data/              # Knowledge base
+├── n8n/                   # Docker compose + workflow
+└── docs/                  # Este documento</code></pre>
+
+<div class="footer-note">
+  YouVisa · Documento Técnico CP5 · IA Generativa<br/>
+  Vinícius Oni · Maio de 2026 · github.com/ViniciusOnii/you_front
+</div>
+</section>
+
+</body>
+</html>
