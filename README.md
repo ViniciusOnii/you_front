@@ -45,6 +45,7 @@ docker compose up -d       # http://localhost:5678
 - **Frontend**: React 18, Vite, Tailwind CSS, jsPDF
 - **Backend**: Python 3.11, FastAPI, Pydantic
 - **GenAI**: Gemini 2.0 Flash, text-embedding-004, LangGraph, Qdrant
+- **Voz (STT)**: Groq Whisper Large v3 Turbo
 - **Observabilidade**: Langfuse Cloud
 - **Automação**: n8n (Docker)
 

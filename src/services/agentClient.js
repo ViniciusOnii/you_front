@@ -41,6 +41,30 @@ export const enviarMensagemAoAgente = async ({
   }
 };
 
+/**
+ * Envia áudio gravado pelo MediaRecorder do browser para transcrição via
+ * Groq Whisper. Retorna o texto transcrito ou erro.
+ */
+export const transcreverAudio = async (blob, userId) => {
+  try {
+    const fd = new FormData();
+    fd.append('audio', blob, 'audio.webm');
+    if (userId) fd.append('user_id', userId);
+    const r = await fetch(`${BACKEND_URL}/transcrever`, {
+      method: 'POST',
+      body: fd,
+    });
+    if (!r.ok) {
+      const erro = await r.text();
+      return { ok: false, erro };
+    }
+    const data = await r.json();
+    return { ok: true, texto: data.texto, modelo: data.modelo };
+  } catch (e) {
+    return { ok: false, erro: e.message, offline: true };
+  }
+};
+
 export const verificarBackend = async () => {
   try {
     const r = await fetch(`${BACKEND_URL}/health`, { method: 'GET' });

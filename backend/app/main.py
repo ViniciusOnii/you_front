@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.rag import store
-from app.routers import chat
+from app.routers import chat, transcrever
 
 
 @asynccontextmanager
@@ -36,6 +36,7 @@ app.add_middleware(
 )
 
 app.include_router(chat.router, tags=["chat"])
+app.include_router(transcrever.router, tags=["voz"])
 
 
 @app.get("/health")
@@ -45,4 +46,6 @@ def health():
         "modelos": {"chat": settings.CHAT_MODEL, "embed": settings.EMBED_MODEL},
         "langfuse_ativo": bool(settings.LANGFUSE_PUBLIC_KEY),
         "n8n_configurado": bool(settings.N8N_WEBHOOK_URL),
+        "stt_groq_ativo": bool(settings.GROQ_API_KEY),
+        "stt_modelo": settings.STT_MODEL,
     }

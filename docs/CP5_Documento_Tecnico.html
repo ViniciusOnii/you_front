@@ -471,6 +471,13 @@ roteia para diferentes ações (notificar suporte, abrir ticket).</p>
 <p><strong>Langfuse Cloud</strong> captura traces de cada interação com o agente, permitindo
 inspecionar latência, custo de tokens e qualidade dos prompts.</p>
 
+<h4>Transcrição de voz (multimodalidade)</h4>
+<p>O frontend grava o microfone do usuário com a Web API <code>MediaRecorder</code>
+e envia o blob de áudio ao endpoint <code>POST /transcrever</code>. O backend
+delega ao modelo <strong>Whisper Large v3 Turbo</strong> hospedado pela
+<strong>Groq Cloud</strong>, que devolve a transcrição em PT-BR. O texto então
+alimenta o mesmo fluxo do agente Inho, fechando o ciclo voz → texto → resposta.</p>
+
 <h3>2.3 Sequência de uma chamada típica</h3>
 
 <figure>
@@ -552,6 +559,19 @@ inspecionar latência, custo de tokens e qualidade dos prompts.</p>
     <tr><td>Limitações</td><td>768 dim já é suficiente para nossa base pequena (23 docs). Para escala maior, considerar <code>text-embedding-3-large</code> da OpenAI (3072 dim)</td></tr>
   </tbody>
 </table>
+
+<h3>3.3 Modelo de transcrição (STT) — Whisper Large v3 Turbo</h3>
+<table>
+  <tbody>
+    <tr><td>Nome</td><td><code>whisper-large-v3-turbo</code></td></tr>
+    <tr><td>Tipo</td><td>Speech-to-Text (áudio → texto)</td></tr>
+    <tr><td>Provedor</td><td>Groq Cloud</td></tr>
+    <tr><td>Idiomas</td><td>Multilíngue (forçado para <code>pt</code> em nosso uso)</td></tr>
+    <tr><td>Forma de acesso</td><td>API REST + SDK <code>groq</code> (Python)</td></tr>
+    <tr><td>Motivo da escolha</td><td>Inferência muito rápida (~300ms para áudios curtos graças à infraestrutura LPU da Groq), free tier generoso para demonstração, aceita formatos webm/ogg/mp3/wav que o navegador grava nativamente via <code>MediaRecorder</code>, qualidade de transcrição em português equivalente ao Whisper original</td></tr>
+    <tr><td>Limitações</td><td>Limite de tamanho do arquivo (25MB) e duração (alguns minutos por chamada). Free tier tem rate limits. Gravações com muito ruído de fundo ainda têm queda de qualidade</td></tr>
+  </tbody>
+</table>
 </section>
 
 <!-- ============================ 4 ============================ -->
@@ -587,10 +607,12 @@ inspecionar latência, custo de tokens e qualidade dos prompts.</p>
   <thead><tr><th>Ferramenta</th><th>Papel no projeto</th></tr></thead>
   <tbody>
     <tr><td>google-genai</td><td>SDK oficial Google para Gemini (chat e embeddings)</td></tr>
+    <tr><td>groq</td><td>SDK oficial Groq para Whisper Large v3 Turbo (transcrição de áudio)</td></tr>
     <tr><td>LangGraph</td><td>Orquestração do agente ReAct com tools</td></tr>
     <tr><td>LangChain Core</td><td>Abstrações de tools (<code>@tool</code>) e mensagens</td></tr>
     <tr><td>langchain-google-genai</td><td>Adapter LangChain ↔ Gemini</td></tr>
     <tr><td>Qdrant</td><td>Vector store persistente (modo local em arquivos ou Qdrant Cloud)</td></tr>
+    <tr><td>MediaRecorder API</td><td>Captura de áudio do microfone do usuário no navegador (Web API nativa)</td></tr>
   </tbody>
 </table>
 
@@ -671,9 +693,13 @@ diretas a arquivos e linhas.
     </tr>
     <tr>
       <td><strong>Multimodalidade</strong></td>
-      <td>Multimodalidade de saída: o agente coordena com o frontend para gerar PDFs
-        ricos via jsPDF (textos + estrutura visual + capa). Multimodalidade de entrada
-        via voz fica como melhoria futura (Web Speech API ou Whisper).</td>
+      <td><strong>Entrada por voz</strong>: o usuário grava áudio diretamente no
+        chatbot pelo botão de microfone (<code>MediaRecorder</code> API). O blob é
+        enviado ao endpoint <code>POST /transcrever</code>, que usa o
+        <strong>Groq Whisper Large v3 Turbo</strong> para transcrever em PT-BR;
+        o texto resultante é injetado no input para o agente processar.
+        <strong>Saída multimodal</strong>: o agente coordena com o frontend para gerar
+        PDFs ricos via jsPDF (textos + estrutura visual + capa).</td>
     </tr>
     <tr>
       <td><strong>Engenharia de contexto</strong></td>

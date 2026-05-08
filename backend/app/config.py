@@ -17,9 +17,12 @@ class Settings:
     PORT: int = int(os.getenv("PORT", "8000"))
     CORS_ORIGINS: list[str] = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
 
+    GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+
     # Modelos
     CHAT_MODEL: str = "gemini-2.0-flash-exp"
     EMBED_MODEL: str = "text-embedding-004"
+    STT_MODEL: str = "whisper-large-v3-turbo"
 
 
 settings = Settings()

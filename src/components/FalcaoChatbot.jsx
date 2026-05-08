@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './FalcaoChatbot.css';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-import { enviarMensagemAoAgente, verificarBackend } from '../services/agentClient';
+import { enviarMensagemAoAgente, transcreverAudio, verificarBackend } from '../services/agentClient';
 import { useAuth } from '../context/AuthContext';
 import { useProcessos } from '../context/ProcessosContext';
 
@@ -23,6 +23,10 @@ const FalcaoChatbot = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [selectedDestination, setSelectedDestination] = useState(null);
   const [waitingForDestination, setWaitingForDestination] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
   const messagesEndRef = useRef(null);
 
   // Base de dados de pontos turísticos
@@ -533,6 +537,47 @@ const FalcaoChatbot = () => {
     }
   };
 
+  // Gravação de voz com MediaRecorder + transcrição via Groq Whisper
+  const iniciarGravacao = async () => {
+    if (!backendOnline) {
+      alert('Transcrição por voz requer o backend rodando.');
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunksRef.current = [];
+      const mr = new MediaRecorder(stream);
+      mr.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      mr.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        if (blob.size === 0) return;
+        setIsTranscribing(true);
+        const r = await transcreverAudio(blob, user?.id);
+        setIsTranscribing(false);
+        if (r.ok && r.texto) {
+          setInputValue((prev) => (prev ? prev + ' ' + r.texto : r.texto));
+        } else if (!r.ok) {
+          alert('Falha ao transcrever áudio. Tente digitar.');
+        }
+      };
+      mediaRecorderRef.current = mr;
+      mr.start();
+      setIsRecording(true);
+    } catch (e) {
+      alert('Não foi possível acessar o microfone. Verifique permissões do navegador.');
+    }
+  };
+
+  const pararGravacao = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
@@ -737,10 +782,32 @@ const FalcaoChatbot = () => {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Digite sua mensagem..."
+              placeholder={
+                isTranscribing
+                  ? 'Transcrevendo áudio...'
+                  : isRecording
+                  ? 'Gravando... clique no microfone para parar'
+                  : 'Digite ou use o microfone...'
+              }
               className="chat-input"
+              disabled={isTranscribing || isRecording}
             />
-            <button type="submit" className="send-btn">
+            {backendOnline && (
+              <button
+                type="button"
+                onClick={isRecording ? pararGravacao : iniciarGravacao}
+                className="send-btn"
+                style={{
+                  background: isRecording ? '#dc2626' : undefined,
+                  marginRight: 4,
+                }}
+                title={isRecording ? 'Parar gravação' : 'Falar (Groq Whisper)'}
+                aria-label={isRecording ? 'Parar gravação' : 'Iniciar gravação de voz'}
+              >
+                {isRecording ? '⏹' : '🎤'}
+              </button>
+            )}
+            <button type="submit" className="send-btn" disabled={isTranscribing || isRecording}>
               ➤
             </button>
           </form>

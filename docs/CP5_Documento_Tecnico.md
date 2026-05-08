@@ -173,6 +173,18 @@ inspecionar latência, custo de tokens e qualidade dos prompts.
 | **Motivo da escolha** | Gratuito, mesmo provedor do LLM (consistência semântica entre indexação e geração), boa performance em português, batch endpoint para indexação rápida |
 | **Limitações** | 768 dim já é suficiente para nossa base pequena (23 docs). Para escala maior, considerar `text-embedding-3-large` da OpenAI (3072 dim) |
 
+### 3.3 Modelo de transcrição (STT) — Whisper Large v3 Turbo
+
+| Item | Descrição |
+|------|-----------|
+| **Nome** | `whisper-large-v3-turbo` |
+| **Tipo** | Speech-to-Text (áudio → texto) |
+| **Provedor** | Groq Cloud |
+| **Idiomas** | Multilíngue (forçado para `pt` em nosso uso) |
+| **Forma de acesso** | API REST + SDK `groq` (Python) |
+| **Motivo da escolha** | Inferência muito rápida (~300ms para áudios curtos graças à infraestrutura LPU da Groq), free tier generoso para demonstração, aceita formatos webm/ogg/mp3/wav que o navegador grava nativamente via `MediaRecorder`, qualidade equivalente ao Whisper original |
+| **Limitações** | Limite de tamanho do arquivo (25MB) e duração (alguns minutos por chamada). Free tier tem rate limits. Gravações ruidosas ainda têm queda de qualidade |
+
 ---
 
 ## 4. Stack Tecnológica
@@ -206,6 +218,8 @@ inspecionar latência, custo de tokens e qualidade dos prompts.
 | **LangChain Core** | Abstrações de tools (`@tool`) e mensagens |
 | **langchain-google-genai** | Adapter LangChain ↔ Gemini |
 | **Qdrant** | Vector store (modo local persistente em arquivos ou Qdrant Cloud) |
+| **groq** | SDK oficial Groq para Whisper Large v3 Turbo (transcrição de áudio) |
+| **MediaRecorder API** | Captura de áudio do microfone do usuário no navegador (Web API nativa) |
 
 ### 4.4 Automação e Observabilidade
 
@@ -237,7 +251,7 @@ inspecionar latência, custo de tokens e qualidade dos prompts.
 | **MCP / Integração de ferramentas** | Três tools registradas via decorator `@tool` do LangChain Core (`backend/app/tools/`): `buscar_destinos` (RAG), `consultar_meus_processos` (estado da aplicação), `notificar_evento_n8n` (integração externa via webhook). O agente recebe schemas tipados e o LLM faz function calling estruturado. |
 | **Observabilidade** | Langfuse integrado em `backend/app/observability.py` via context manager `trace()`. Cada chamada ao endpoint `/chat` cria um trace com `user_id`, tamanho da mensagem e número de processos do usuário. Dashboard em `cloud.langfuse.com` mostra latência, tokens, custo e replay de prompts. |
 | **Deploy** | Backend preparado para deploy em Render (Python free tier), frontend em Vercel ou Netlify. Variáveis sensíveis isoladas em `.env`. CORS configurado por ambiente. n8n em container Docker portável. |
-| **Multimodalidade** | Multimodalidade de saída: o agente coordena com o frontend para gerar PDFs ricos via jsPDF (textos + estrutura visual + capa). Multimodalidade de entrada via voz fica como melhoria futura (Web Speech API ou Whisper). |
+| **Multimodalidade** | **Entrada por voz**: usuário grava áudio no chatbot via `MediaRecorder` API, blob é enviado a `POST /transcrever`, transcrito pelo **Groq Whisper Large v3 Turbo** em PT-BR e o texto é injetado no input do agente. **Saída multimodal**: o agente coordena com o frontend para gerar PDFs ricos via jsPDF (textos + estrutura visual + capa). |
 | **Engenharia de contexto** | (i) Construção do prompt dinâmico no router `/chat`: histórico das últimas 6 mensagens + system prompt + injeção do snapshot de processos via `set_contexto`. (ii) Chunking semântico por documento (granularidade ideal para a base atual). (iii) Recuperação top-k filtrada para reduzir ruído. |
 | **Fine-tuning** | Não aplicado nesta versão — o `text-embedding-004` e o `gemini-2.0-flash` zero-shot já dão resultados suficientes para o domínio. Documentado como melhoria futura na seção 9 caso a base cresça acima de 1000 documentos. |
 | **Tool calling estruturado** | Os argumentos das tools são tipados (`query: str, pais: str | None`). O LLM emite chamadas em JSON validadas pelo LangChain antes da execução. |
