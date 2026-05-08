@@ -1,0 +1,159 @@
+{
+  "name": "YouVisa - Receber eventos do agente Inho",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "youvisa-evento",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "youvisa-evento"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.tipo }}",
+                    "rightValue": "ajuda_solicitada",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.tipo }}",
+                    "rightValue": "status_negado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        }
+      },
+      "id": "switch-1",
+      "name": "Roteador por tipo",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Notifica suporte (placeholder de email/slack — em produção plugar SendGrid)\nconst evento = items[0].json.body;\nconsole.log('[YouVisa] AJUDA SOLICITADA:', evento);\nreturn [{\n  json: {\n    notificado: true,\n    canal: 'suporte',\n    evento\n  }\n}];"
+      },
+      "id": "code-1",
+      "name": "Notificar Suporte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Trata negativa de visto — abre ticket no CRM (placeholder)\nconst evento = items[0].json.body;\nconsole.log('[YouVisa] PROCESSO NEGADO:', evento);\nreturn [{\n  json: {\n    ticket_aberto: true,\n    prioridade: 'alta',\n    evento\n  }\n}];"
+      },
+      "id": "code-2",
+      "name": "Abrir Ticket Negativa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, processado: $json } }}"
+      },
+      "id": "respond-1",
+      "name": "Responder ao backend",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [960, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Roteador por tipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roteador por tipo": {
+      "main": [
+        [
+          {
+            "node": "Notificar Suporte",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Abrir Ticket Negativa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notificar Suporte": {
+      "main": [
+        [
+          {
+            "node": "Responder ao backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Abrir Ticket Negativa": {
+      "main": [
+        [
+          {
+            "node": "Responder ao backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

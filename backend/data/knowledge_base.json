@@ -1,0 +1,186 @@
+[
+  {
+    "pais": "Estados Unidos",
+    "cidade": "Nova York",
+    "atracao": "Estátua da Liberdade",
+    "categoria": "monumento",
+    "descricao": "Símbolo da liberdade e democracia, presente da França aos EUA em 1886. Localizada em Liberty Island.",
+    "dica": "Reserve com antecedência para subir na coroa, ingressos esgotam meses antes."
+  },
+  {
+    "pais": "Estados Unidos",
+    "cidade": "Nova York",
+    "atracao": "Times Square",
+    "categoria": "ponto-turistico",
+    "descricao": "Coração comercial de Manhattan, conhecido pelos painéis luminosos gigantes e pela movimentação 24h.",
+    "dica": "Vá ao anoitecer para apreciar as luzes em todo seu esplendor."
+  },
+  {
+    "pais": "Estados Unidos",
+    "cidade": "Nova York",
+    "atracao": "Central Park",
+    "categoria": "parque",
+    "descricao": "Maior parque urbano de Manhattan com 341 hectares. Lago, trilhas, zoológico e atrações culturais.",
+    "dica": "Alugue uma bicicleta para explorar todo o parque com mais facilidade."
+  },
+  {
+    "pais": "Estados Unidos",
+    "cidade": "Los Angeles",
+    "atracao": "Hollywood Walk of Fame",
+    "categoria": "ponto-turistico",
+    "descricao": "Calçada da fama com mais de 2700 estrelas homenageando celebridades do entretenimento.",
+    "dica": "Combine a visita com o letreiro Hollywood Sign e o Griffith Observatory."
+  },
+  {
+    "pais": "Estados Unidos",
+    "cidade": "Los Angeles",
+    "atracao": "Santa Monica Pier",
+    "categoria": "praia",
+    "descricao": "Píer histórico com parque de diversões, roda gigante e vista para o Pacífico.",
+    "dica": "Final do trecho clássico da Rota 66, ótimo para fotos no fim de tarde."
+  },
+  {
+    "pais": "Estados Unidos",
+    "cidade": "Miami",
+    "atracao": "South Beach",
+    "categoria": "praia",
+    "descricao": "Famosa praia com areia branca, água azul-turquesa e arquitetura art déco em Ocean Drive.",
+    "dica": "Visite o Distrito Art Déco a pé, é gratuito e historicamente rico."
+  },
+  {
+    "pais": "França",
+    "cidade": "Paris",
+    "atracao": "Torre Eiffel",
+    "categoria": "monumento",
+    "descricao": "Ícone mundial construído em 1889 para a Exposição Universal. Tem 330m de altura.",
+    "dica": "Suba ao topo no fim do dia para ver Paris iluminada à noite."
+  },
+  {
+    "pais": "França",
+    "cidade": "Paris",
+    "atracao": "Museu do Louvre",
+    "categoria": "museu",
+    "descricao": "Maior museu de arte do mundo, com 380 mil obras incluindo a Mona Lisa e a Vênus de Milo.",
+    "dica": "Compre ingresso online com horário marcado, evita filas de horas."
+  },
+  {
+    "pais": "França",
+    "cidade": "Paris",
+    "atracao": "Catedral de Notre-Dame",
+    "categoria": "religioso",
+    "descricao": "Catedral gótica do século XII, em restauração após o incêndio de 2019. Visitação externa liberada.",
+    "dica": "A reabertura interna está prevista, confira atualizações antes da viagem."
+  },
+  {
+    "pais": "França",
+    "cidade": "Paris",
+    "atracao": "Avenida Champs-Élysées",
+    "categoria": "ponto-turistico",
+    "descricao": "Avenida de 2km que liga a Place de la Concorde ao Arco do Triunfo, com lojas de luxo.",
+    "dica": "Caminhe ao entardecer para apreciar a iluminação dos prédios históricos."
+  },
+  {
+    "pais": "Itália",
+    "cidade": "Roma",
+    "atracao": "Coliseu",
+    "categoria": "monumento",
+    "descricao": "Anfiteatro romano construído no século I, símbolo do Império Romano e dos jogos de gladiadores.",
+    "dica": "O ingresso combinado dá acesso ao Fórum Romano e ao Monte Palatino."
+  },
+  {
+    "pais": "Itália",
+    "cidade": "Roma",
+    "atracao": "Vaticano e Basílica de São Pedro",
+    "categoria": "religioso",
+    "descricao": "Menor país do mundo, sede da Igreja Católica. Inclui a Capela Sistina pintada por Michelangelo.",
+    "dica": "Reserve a entrada antecipada, a fila normal pode levar 3 horas no verão."
+  },
+  {
+    "pais": "Itália",
+    "cidade": "Roma",
+    "atracao": "Fontana di Trevi",
+    "categoria": "monumento",
+    "descricao": "Fonte barroca do século XVIII. A tradição é jogar uma moeda de costas para garantir o retorno a Roma.",
+    "dica": "Visite ao amanhecer para evitar multidões e tirar fotos sem turistas."
+  },
+  {
+    "pais": "Itália",
+    "cidade": "Veneza",
+    "atracao": "Praça São Marcos",
+    "categoria": "ponto-turistico",
+    "descricao": "Principal praça de Veneza, com a Basílica de São Marcos, a Torre do Relógio e o Palácio Ducal.",
+    "dica": "Em períodos de aqua alta a praça pode alagar, leve botas impermeáveis."
+  },
+  {
+    "pais": "Itália",
+    "cidade": "Veneza",
+    "atracao": "Grande Canal",
+    "categoria": "ponto-turistico",
+    "descricao": "Principal via aquática de Veneza, atravessada por gôndolas e vaporettos com vista para palácios.",
+    "dica": "O vaporetto número 1 é o tour mais barato e cobre todo o canal."
+  },
+  {
+    "pais": "Espanha",
+    "cidade": "Barcelona",
+    "atracao": "Sagrada Família",
+    "categoria": "religioso",
+    "descricao": "Basílica monumental projetada por Antoni Gaudí, em construção desde 1882. Conclusão prevista para 2026.",
+    "dica": "Compre ingresso com torre, a vista de Barcelona é incrível do alto."
+  },
+  {
+    "pais": "Espanha",
+    "cidade": "Barcelona",
+    "atracao": "Park Güell",
+    "categoria": "parque",
+    "descricao": "Parque público com arquitetura modernista de Gaudí, mosaicos coloridos e vista panorâmica.",
+    "dica": "A zona monumental cobra ingresso, mas o restante do parque é gratuito."
+  },
+  {
+    "pais": "Espanha",
+    "cidade": "Madri",
+    "atracao": "Museu do Prado",
+    "categoria": "museu",
+    "descricao": "Principal museu de arte da Espanha, com obras de Velázquez, Goya, El Greco e mestres europeus.",
+    "dica": "Entrada gratuita nas últimas duas horas de cada dia."
+  },
+  {
+    "pais": "Espanha",
+    "cidade": "Madri",
+    "atracao": "Parque do Retiro",
+    "categoria": "parque",
+    "descricao": "Parque histórico com lago artificial, Palácio de Cristal e jardins. Patrimônio da UNESCO.",
+    "dica": "Alugue um barco no lago central para uma experiência clássica madrilena."
+  },
+  {
+    "pais": "Portugal",
+    "cidade": "Lisboa",
+    "atracao": "Torre de Belém",
+    "categoria": "monumento",
+    "descricao": "Fortaleza manuelina do século XVI à beira do Tejo. Patrimônio da Humanidade UNESCO.",
+    "dica": "Combine com o Mosteiro dos Jerônimos, fica caminhando ao lado."
+  },
+  {
+    "pais": "Portugal",
+    "cidade": "Lisboa",
+    "atracao": "Bairro de Alfama",
+    "categoria": "ponto-turistico",
+    "descricao": "Bairro mais antigo de Lisboa, com ruelas estreitas, casas históricas e casas de fado.",
+    "dica": "Pegue o Elétrico 28 para um tour panorâmico pelos bairros históricos."
+  },
+  {
+    "pais": "Portugal",
+    "cidade": "Porto",
+    "atracao": "Ribeira do Porto",
+    "categoria": "ponto-turistico",
+    "descricao": "Bairro histórico à margem do Rio Douro, com casas coloridas e a Ponte D. Luís I.",
+    "dica": "Faça um cruzeiro pelo Douro para ver as seis pontes do Porto."
+  },
+  {
+    "pais": "Portugal",
+    "cidade": "Porto",
+    "atracao": "Caves de Vinho do Porto",
+    "categoria": "gastronomia",
+    "descricao": "Adegas centenárias em Vila Nova de Gaia onde o vinho do Porto é envelhecido. Visitas guiadas com degustação.",
+    "dica": "Calém, Sandeman e Graham's são as mais visitadas, reserve com antecedência."
+  }
+]

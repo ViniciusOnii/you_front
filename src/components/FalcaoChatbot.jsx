@@ -2,8 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import './FalcaoChatbot.css';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import { enviarMensagemAoAgente, verificarBackend } from '../services/agentClient';
+import { useAuth } from '../context/AuthContext';
+import { useProcessos } from '../context/ProcessosContext';
 
 const FalcaoChatbot = () => {
+  const { user } = useAuth();
+  const { processos } = useProcessos();
+  const [backendOnline, setBackendOnline] = useState(false);
+
+  useEffect(() => {
+    verificarBackend().then((r) => setBackendOnline(r.online));
+  }, []);
+
   const [isVisible, setIsVisible] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -522,15 +533,43 @@ const FalcaoChatbot = () => {
     }
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
+    const textoOriginal = inputValue;
     const userInput = inputValue.trim().toLowerCase();
 
     // Adiciona mensagem do usuário
-    setMessages(prev => [...prev, { text: inputValue, sender: 'user', timestamp: new Date() }]);
+    setMessages(prev => [...prev, { text: textoOriginal, sender: 'user', timestamp: new Date() }]);
     setInputValue('');
+
+    // Se backend está online, delega ao agente Inho (Gemini + RAG + tools)
+    if (backendOnline && !waitingForDestination && !selectedDestination) {
+      setIsTyping(true);
+      const historico = messages
+        .filter((m) => m.sender === 'user' || m.sender === 'inho')
+        .slice(-6)
+        .map((m) => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text }));
+
+      const resp = await enviarMensagemAoAgente({
+        mensagem: textoOriginal,
+        historico,
+        userId: user?.id,
+        processosUsuario: processos,
+      });
+
+      if (resp.ok) {
+        setMessages((prev) => [
+          ...prev,
+          { text: resp.resposta, sender: 'inho', timestamp: new Date() },
+        ]);
+        setIsTyping(false);
+        return;
+      }
+      // Falhou — cai no fluxo legado abaixo
+      setIsTyping(false);
+    }
 
     // Se está esperando destino
     if (waitingForDestination) {
