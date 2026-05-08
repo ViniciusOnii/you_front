@@ -15,7 +15,7 @@ async def lifespan(_app: FastAPI):
     if settings.GOOGLE_API_KEY:
         try:
             n = store.indexar()
-            print(f"[RAG] {n} destinos indexados no ChromaDB.")
+            print(f"[RAG] {n} destinos indexados no Qdrant.")
         except Exception as e:
             print(f"[RAG] Falha na indexação inicial: {e}")
     yield

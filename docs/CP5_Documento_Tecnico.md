@@ -97,7 +97,7 @@ HTTP, possibilitando deploy e evolução desacoplados:
                  ▼                                  ▼
    ┌────────────────────────┐          ┌─────────────────────────┐
    │ VECTOR STORE           │          │  n8n (workflow)         │
-   │ ChromaDB persistente   │          │  Switch por tipo →      │
+   │ Qdrant persistente   │          │  Switch por tipo →      │
    │ + embeddings Gemini    │          │  Notificar / Ticket     │
    │ text-embedding-004     │          │                         │
    └────────────────────────┘          └─────────────────────────┘
@@ -132,7 +132,7 @@ decide autonomamente qual tool acionar:
 | `notificar_evento_n8n` | Dispara webhook para automação no n8n |
 
 #### Vector Store
-**ChromaDB persistente** (`backend/data/chroma/`) com embeddings de 768
+**Qdrant persistente** (`backend/data/qdrant_storage/`) com embeddings de 768
 dimensões gerados pelo modelo `text-embedding-004` do Google. Métrica de
 similaridade: cosseno.
 
@@ -205,7 +205,7 @@ inspecionar latência, custo de tokens e qualidade dos prompts.
 | **LangGraph** | Orquestração do agente ReAct com tools |
 | **LangChain Core** | Abstrações de tools (`@tool`) e mensagens |
 | **langchain-google-genai** | Adapter LangChain ↔ Gemini |
-| **ChromaDB** | Vector store persistente local |
+| **Qdrant** | Vector store (modo local persistente em arquivos ou Qdrant Cloud) |
 
 ### 4.4 Automação e Observabilidade
 
@@ -232,7 +232,7 @@ inspecionar latência, custo de tokens e qualidade dos prompts.
 | Tema da disciplina | Aplicação concreta no projeto |
 |--------------------|-------------------------------|
 | **Prompt Engineering** | System prompt estruturado em `backend/app/agents/inho.py` com persona definida (Inho, falcão mascote), papel, diretrizes de tom, restrições contra alucinação ("baseie a resposta nos dados retornados — não invente atrações"), formato de saída e uso controlado de emojis. |
-| **RAG (Retrieval-Augmented Generation)** | Pipeline completo em `backend/app/rag/store.py`: (1) chunking por destino, (2) embeddings via `text-embedding-004`, (3) indexação em ChromaDB persistente, (4) recuperação top-k=4 com filtro opcional por país. A tool `buscar_destinos` é chamada pelo agente quando o user pergunta sobre pontos turísticos. |
+| **RAG (Retrieval-Augmented Generation)** | Pipeline completo em `backend/app/rag/store.py`: (1) chunking por destino, (2) embeddings via `text-embedding-004`, (3) indexação em Qdrant persistente, (4) recuperação top-k=4 com filtro opcional por país. A tool `buscar_destinos` é chamada pelo agente quando o user pergunta sobre pontos turísticos. |
 | **Agentes** | Agente ReAct em `backend/app/agents/inho.py` usando `langgraph.prebuilt.create_react_agent`. O agente decide autonomamente quando chamar cada tool (busca em destinos, consulta de processos, disparo de evento), realizando múltiplos turnos de raciocínio se necessário. |
 | **MCP / Integração de ferramentas** | Três tools registradas via decorator `@tool` do LangChain Core (`backend/app/tools/`): `buscar_destinos` (RAG), `consultar_meus_processos` (estado da aplicação), `notificar_evento_n8n` (integração externa via webhook). O agente recebe schemas tipados e o LLM faz function calling estruturado. |
 | **Observabilidade** | Langfuse integrado em `backend/app/observability.py` via context manager `trace()`. Cada chamada ao endpoint `/chat` cria um trace com `user_id`, tamanho da mensagem e número de processos do usuário. Dashboard em `cloud.langfuse.com` mostra latência, tokens, custo e replay de prompts. |
@@ -283,7 +283,7 @@ contagem na coleção já bate com o JSON, pula a etapa.
 
 `store.buscar(query, k=4, pais=None)`:
 1. Embed da query com o **mesmo modelo** da indexação (consistência semântica).
-2. `coll.query` no Chroma retorna top-k por similaridade de cosseno.
+2. `client.query_points` no Qdrant retorna top-k por similaridade de cosseno.
 3. Filtro opcional via `where={"pais": pais}` quando o agente já sabe a
    restrição geográfica.
 4. Resultado retornado como string formatada `[1] ... [2] ...` para o LLM
@@ -425,7 +425,7 @@ docker compose up -d
 4. Pergunta: *"Quais pontos turísticos eu vejo em Paris?"*
 5. **Agente raciocina:**
    - Decide chamar `buscar_destinos(query="Paris", pais="França")`
-   - Recebe 4 destinos relevantes do Chroma
+   - Recebe 4 destinos relevantes do Qdrant
    - Sintetiza resposta em linguagem natural
 6. Resposta aparece no chat (~2s)
 7. Trace completo é registrado no Langfuse
@@ -443,7 +443,7 @@ Trace: chat_inho
 ├── Span 2: tool buscar_destinos
 │   ├── query: "Paris"
 │   ├── resultados: 4 docs
-│   └── latência: 230ms (embed + chroma query)
+│   └── latência: 230ms (embed + qdrant query)
 ├── Span 3: gemini-2.0-flash-exp
 │   ├── input: 1.247 tokens
 │   ├── output: 178 tokens
@@ -463,7 +463,7 @@ you_front/
 ├── backend/               # Backend Python + agente
 │   ├── app/
 │   │   ├── agents/        # LangGraph
-│   │   ├── rag/           # ChromaDB
+│   │   ├── rag/           # Qdrant
 │   │   ├── tools/         # Tool registrations
 │   │   └── routers/
 │   └── data/              # Knowledge base

@@ -30,6 +30,7 @@ backend/**/__pycache__/
 backend/*.pyc
 backend/.env
 backend/data/chroma/
+backend/data/qdrant_storage/
 
 # n8n
 n8n/n8n_data/

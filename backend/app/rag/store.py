@@ -1,32 +1,49 @@
 """
 RAG (Retrieval-Augmented Generation) sobre a base de pontos turísticos.
 
-Usa ChromaDB persistente local + embeddings text-embedding-004 do Google.
+Usa Qdrant como vector store + embeddings text-embedding-004 do Google.
+Modo padrão: client local persistente (Qdrant rodando em ./data/qdrant_storage).
+Pode ser apontado para Qdrant Cloud via QDRANT_URL + QDRANT_API_KEY no .env.
+
 Cada ponto turístico é um chunk (granularidade ideal para esse tamanho de
 conteúdo — chunks muito grandes diluem o sinal).
 """
 import json
+import os
 from pathlib import Path
 from typing import Any
 
-import chromadb
-from chromadb.config import Settings as ChromaSettings
 from google import genai
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams, PointStruct, Filter, FieldCondition, MatchValue
 
 from app.config import settings
 
 KB_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "knowledge_base.json"
-PERSIST_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "chroma"
+PERSIST_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "qdrant_storage"
 COLLECTION = "youvisa_destinos"
+VECTOR_DIM = 768  # text-embedding-004
 
 
-def _client() -> genai.Client:
+def _gemini() -> genai.Client:
     return genai.Client(api_key=settings.GOOGLE_API_KEY)
+
+
+def _qdrant() -> QdrantClient:
+    """
+    Retorna client Qdrant. Se QDRANT_URL estiver setado no .env, usa Qdrant Cloud;
+    caso contrário, usa modo local persistente (arquivos em data/qdrant_storage/).
+    """
+    url = os.getenv("QDRANT_URL")
+    api_key = os.getenv("QDRANT_API_KEY")
+    if url:
+        return QdrantClient(url=url, api_key=api_key)
+    return QdrantClient(path=str(PERSIST_DIR))
 
 
 def _embed(textos: list[str]) -> list[list[float]]:
     """Gera embeddings em lote usando text-embedding-004 (768 dimensões)."""
-    resp = _client().models.embed_content(
+    resp = _gemini().models.embed_content(
         model=settings.EMBED_MODEL,
         contents=textos,
     )
@@ -46,71 +63,87 @@ def _chunk_para_texto(item: dict[str, Any]) -> str:
     )
 
 
-def _get_collection():
-    client = chromadb.PersistentClient(
-        path=str(PERSIST_DIR),
-        settings=ChromaSettings(anonymized_telemetry=False),
-    )
-    return client.get_or_create_collection(
-        name=COLLECTION,
-        metadata={"hnsw:space": "cosine"},
-    )
+def _ensure_collection(client: QdrantClient):
+    existing = [c.name for c in client.get_collections().collections]
+    if COLLECTION not in existing:
+        client.create_collection(
+            collection_name=COLLECTION,
+            vectors_config=VectorParams(size=VECTOR_DIM, distance=Distance.COSINE),
+        )
 
 
 def indexar() -> int:
     """
-    Lê knowledge_base.json, gera embeddings e popula a coleção do Chroma.
+    Lê knowledge_base.json, gera embeddings e popula a coleção do Qdrant.
     Idempotente — se a coleção já tem o mesmo número de itens, pula.
     """
     items = json.loads(KB_PATH.read_text(encoding="utf-8"))
-    coll = _get_collection()
+    client = _qdrant()
+    _ensure_collection(client)
 
-    if coll.count() == len(items):
-        return coll.count()
+    info = client.get_collection(COLLECTION)
+    if info.points_count == len(items):
+        return info.points_count
 
     # Reseta para garantir consistência se a base mudou
-    if coll.count() > 0:
-        coll.delete(ids=coll.get()["ids"])
+    client.delete_collection(COLLECTION)
+    _ensure_collection(client)
 
     docs = [_chunk_para_texto(it) for it in items]
-    ids = [f"dst-{i:04d}" for i in range(len(items))]
-    metadatas = [
-        {"pais": it["pais"], "cidade": it["cidade"], "categoria": it["categoria"]}
-        for it in items
-    ]
-
     embeddings = _embed(docs)
-    coll.add(ids=ids, documents=docs, metadatas=metadatas, embeddings=embeddings)
-    return coll.count()
+
+    pontos = [
+        PointStruct(
+            id=i,
+            vector=emb,
+            payload={
+                "documento": doc,
+                "pais": items[i]["pais"],
+                "cidade": items[i]["cidade"],
+                "categoria": items[i]["categoria"],
+            },
+        )
+        for i, (doc, emb) in enumerate(zip(docs, embeddings))
+    ]
+    client.upsert(collection_name=COLLECTION, points=pontos)
+
+    return client.get_collection(COLLECTION).points_count
 
 
 def buscar(query: str, k: int = 4, pais: str | None = None) -> list[dict[str, Any]]:
     """
     Busca semântica por similaridade de cosseno. Aceita filtro opcional por país.
-    Retorna lista de {documento, metadados, distancia}.
+    Retorna lista de {documento, metadados, score}.
     """
-    coll = _get_collection()
-    if coll.count() == 0:
+    client = _qdrant()
+    _ensure_collection(client)
+
+    if client.get_collection(COLLECTION).points_count == 0:
         indexar()
 
-    where = {"pais": pais} if pais else None
-    embedding = _embed([query])[0]
+    query_filter = None
+    if pais:
+        query_filter = Filter(
+            must=[FieldCondition(key="pais", match=MatchValue(value=pais))]
+        )
 
-    res = coll.query(
-        query_embeddings=[embedding],
-        n_results=k,
-        where=where,
+    embedding = _embed([query])[0]
+    res = client.query_points(
+        collection_name=COLLECTION,
+        query=embedding,
+        query_filter=query_filter,
+        limit=k,
     )
 
     return [
         {
-            "documento": doc,
-            "metadados": meta,
-            "distancia": dist,
+            "documento": p.payload["documento"],
+            "metadados": {
+                "pais": p.payload.get("pais"),
+                "cidade": p.payload.get("cidade"),
+                "categoria": p.payload.get("categoria"),
+            },
+            "score": p.score,
         }
-        for doc, meta, dist in zip(
-            res["documents"][0],
-            res["metadatas"][0],
-            res["distances"][0],
-        )
+        for p in res.points
     ]
